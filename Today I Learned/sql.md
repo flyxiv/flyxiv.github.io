@@ -10,7 +10,7 @@ sort: 1
 *  데이터베이스에서 원하는 데이터를 가져오기 위해 사용하는 query 언어.
 </br></br>
 
-![database_example](./images/database_example.png)
+![database_example](./../images/database_example.png)
 
 *  데이터베이스의 데이터는 너무 커서 그 데이터 전체를 가져오기도 힘들 뿐더러, 전체를 가져온다 하더라도 대부분 경우 그 중 자신이 사용하려는 데이터는 극히 일부이기 때문에 굉장히 효율이 떨어진다. </br></br>
 *  따라서 데이터베이스를 사용할 때는 **자신의 의도에 맞는 데이터들을 찾아서 그 데이터들만 뽑아오는 것이 속도 그리고 효율성 측면에서 훨씬 좋다.** </br></br>
@@ -101,10 +101,8 @@ FROM table_name
    * ALL conditional: **조건문 만족하는 행만 agg(중복 O)**
    * DISTINCT conditional: **조건문 만족하는 행만 agg(중복 X)**
   
-1) ```sql 
-   COUNT( [ALL cond | DISTINCT cond | *] ): row 개수를 세는 함수
-   ```
-   * COUNT(*): **모든 행 개수**
+1)  COUNT( [ALL cond | DISTINCT cond | *] ): row 개수를 세는 함수
+      * COUNT(*): **모든 행 개수**
 2) AVG: 행들의 평균
 3) STDEV: 행들의 표본 표준편차
 4) STDEVP: 행들의 전체 표준편차 (Population)
@@ -119,9 +117,36 @@ FROM table_name
 ### 9) CONDITIONALS
 
 * AND | OR | NOT: 기본적 논리 연산자들
+  
 * IN: column이 어떤 값들의 집합에 포함되는지 확인
-* ANY: 
+  
+* ANY: 집합안의 값 중 하나라도 조건을 만족하면 True
+  
 * BETWEEN: column이 어떤 값들 사이에 있는지 확인 - inclusive
-* 
+  
+* IFNULL: Null이면 expr1, 아니면 expr2
 
+* NULLIF(val1, val2): val1=val2면 NULL, 아니면 val1 
 
+### 10) 그 외 사용할만한 Feature들
+
+* CASE: procedure없이도 if-then-else 사용하게 해줌
+
+```sql
+
+   CASE expr WHEN cond1 THEN return1
+             WHEN cond2 THEN return2
+             ...
+             ELSE return_else
+
+```
+
+* DECODE: CASE 문의 축약 version. = 만 지원
+  
+```sql
+   DECODE(column, val1, ret1, val2, ret2, ...) 
+   #column == val1 => ret1, column==val2 => ret2
+```
+
+* COALESCE: col이 NULL이면 다른 값 채워넣음
+* GREATEST, LEAST: 값들 중 max/min값 가져옴
