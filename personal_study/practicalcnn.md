@@ -25,7 +25,14 @@ sort: 4
 
 ## 3. CNN의 기본
 1) 작동 방식:
-
+   * 컴퓨터가 인식하기 쉽게 **image는 한 개로 오지 않고 이를 컴퓨터가 인식하기 쉽게 어떤 특성을 기준으로 나눈 여러 개의 channel로 주어진다.**
+      * ex) RGB: R, G, B하나당 채널 한 개씩. 흑백같은 간단한 사진이면 한 개의 channel을 주기도 한다.
+      * 아래 예제에서는 그림의 간략화를 위해 빨간색 채널, 회색 채널로만 정리했고 파란색 문도 생략했다.
+   * 눈에 대응되는 부분이 아래 그림의 "필터"들로, 각 channel에 대해 다른 weight를 가지고 있고 이 weight들은 학습된다. 이들 또한 input image를 어떤 특정한 기준으로 filtering하여 각 필터는 자신이 정한 특성에 대한 값들을 추출하려 노력한다.
+      * 예제의 1번 필터는 빨간색 채널용 필터가 전부 1이므로 **3*3 빨간색 정사각형 특성을 찾는데 특화된 필터다.**
+      * 예제의 2번 필터는 회색용 필터가 + 모양으로 1이므로 **회색 십자 모양 특성을 찾는데 특화된 필터다.**
+      * 예제의 3번 필터는 아래쪽은 회색이다가 위는 빨간색인, **회색 벽과 빨간색 지붕 사이 boundary가 되는 영역을 찾는데 특화된 필터다**
+   * 이렇게 필터로 합성곱을 하면서 각 필터 집합마다 그 필터가 주로 보는 특성 위주로 채널이 한 개씩 생긴다.
 ![cnn1](../images/cnndiagram1.png)
 ![cnn2](../images/cnndiagram2.png)
 ![cnn3](../images/cnndiagram3.png)
@@ -35,10 +42,17 @@ sort: 4
 ![cnn7](../images/cnndiagram7.png)
 ![cnn8](../images/cnndiagram8.png)
 
-2) CNN의 Hyperparameter: **channel, kernel size, stride**
+1) CNN의 Hyperparameter: **channel, kernel size, stride, padding**
+   
 ![cnn9](../images/cnndiagram9.png)
 
-3) CNN의 변형인 Pool Layer: CNN의 변형으로 **filter 내에서 합성곱 대신 최대/평균 값을 구한다.**
+* padding: same/valid
+   * valid 를 사용하면 CNN을 적용할 때마다 image의 크기가 줄어들게 된다
+   * 이를 방지하기 위해 **data 주위를 0 padding으로 둘러싸서 output shape이 input shape과 같게 하는 방법이 same padding**
+![same_padding](../images/samepadding.png)
+
+1) CNN의 변형인 Pool Layer: CNN의 변형으로 **filter 내에서 합성곱 대신 최대/평균 값을 구한다.**
+   
 ![cnn10](../images/cnndiagram10.png)
 
 ## 4. CNN의 정석
@@ -56,7 +70,7 @@ sort: 4
       * ex) (5, 5) 크기의 kernel layer 한 개 대신 (3, 3)크기의 kernel layer 2개 사용
    * **Channel은 하위 layer는 크게, 상위 layer로 갈수록 작게 설정**
       * 하위 layer는 최대한 많은 low-level 특징을 수집하고, 상위 layer는 몇 개의 중요한 전체적 특징을 포착하게 하기 위함.
-   * **stride가 아니면 절대로 image크기가 바뀌지 않도록 valid padding을 사용한다.**  
+   * **stride는 1 또는 2를 사용하고, stride가 아니면 절대로 image크기가 바뀌지 않도록 same padding을 사용한다.**  
       * 이래야만 image크기가 layer이 지나도 유지되므로 Residual Block, Inception등 CNN의 여러 심화 기법들을 사용할 수 있다.
 
 2) CNN의 크기 및 깊이 설정
@@ -64,6 +78,7 @@ sort: 4
       * ex) 크기가 5 * 5의 image: 
       kernel size (3, 3)으로 구성하면 첫 번째 pixel은 최대 세 번째 pixel하고만 연결되고, 세 번째 pixel은 최대 마지막 pixel인 다섯번째 pixel까지 연결된다. 
       따라서 **한 layer을 더 추가하면 1 pixel과 5 pixel이 연결되므로 올바른 CNN구조의 최소 조건이 만족된다.**
+
       ![cnnsize1](../images/cnnsize1.png)
 
       ![cnnsize2](../images/cnnsize2.png)
@@ -76,7 +91,7 @@ sort: 4
 * 한쪽 변이 4배나 긴 직사각형 layer 
 * 마지막 CNN layer의 Channel은 Feature개수인 38과 비슷한 16-32정도로 설정 - 아래 layer들은 이보다 2배씩 큰 channel값 할당.
 * 크기가 7인 x축 feature는 크기가 3인 filter 3개를 사용하면 맞춰줄 수 있다.
-* 여기에 **y축은 x축보다 4배가 크므로 stride가 2인 CNN을 2번 사용해줘서 맞춘다.**
+* 여기에 **y축은 x축보다 5배가 크므로 stride가 2인 CNN을 2번 사용해줘서 맞춘다.**
 * 이러면 최소 연결 조건을 만족하므로 Flatten 후 Dense를 통해 결과를 얻는다.
   
 ```python
