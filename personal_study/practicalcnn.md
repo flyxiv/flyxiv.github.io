@@ -30,8 +30,9 @@ sort: 4
       * 아래 예제에서는 그림의 간략화를 위해 빨간색 채널, 회색 채널로만 정리했고 파란색 문도 생략했다.
    * 눈에 대응되는 부분이 아래 그림의 "필터"들로, 각 channel에 대해 다른 weight를 가지고 있고 이 weight들은 학습된다. 이들 또한 input image를 어떤 특정한 기준으로 filtering하여 각 필터는 자신이 정한 특성에 대한 값들을 추출하려 노력한다.
       * 예제의 1번 필터는 빨간색 채널용 필터가 전부 1이므로 **3*3 빨간색 정사각형 특성을 찾는데 특화된 필터다.**
-      * 예제의 2번 필터는 회색용 필터가 + 모양으로 1이므로 **회색 십자 모양 특성을 찾는데 특화된 필터다.**
+      * 예제의 2번 필터는 회색용 필터가 + 모양으로 1이므로 **회색 십자 모양 특성을 찾는데 특화된 필터다.** - 이보다는 회색 네모를 찾는게 더 회색 벽을 찾는데 도움이 될 것이므로 회색 필터의 0인 weight들은 학습을 진행하면서 1에 가까워질 것이다.
       * 예제의 3번 필터는 아래쪽은 회색이다가 위는 빨간색인, **회색 벽과 빨간색 지붕 사이 boundary가 되는 영역을 찾는데 특화된 필터다**
+      * 이렇게 **각각 빨간색 지붕, 회색 벽, 지붕과 벽의 boundary를 포착하는 3개의 channel로 image의 특징을 잘 잡을 것이라고 기대하는 것. 채널이 더 필요하다 생각되면 더 지정해주면 된다.**
    * 이렇게 필터로 합성곱을 하면서 각 필터 집합마다 그 필터가 주로 보는 특성 위주로 채널이 한 개씩 생긴다.
 ![cnn1](../images/cnndiagram1.png)
 ![cnn2](../images/cnndiagram2.png)
@@ -64,15 +65,17 @@ sort: 4
    * 이 때 CNN이 너무 작으면 Pool Layer은 건너뛰어도 됨.
 
 1) Hyperparameter의 정석
-   * **stride < kernel size - 절대 stride를 filter 크기 이상으로 설정하지 않는다.**
-      * stride가 더 크게 되면 건너뛰는 feature들이 생기게 됨
    * **kernel size의 최적값은 3, 큰 kernel대신 작은 kernel을 가진 layer 여러개가 대부분 좋다.**
       * ex) (5, 5) 크기의 kernel layer 한 개 대신 (3, 3)크기의 kernel layer 2개 사용
-   * **Channel은 하위 layer는 크게, 상위 layer로 갈수록 작게 설정**
-      * 하위 layer는 최대한 많은 low-level 특징을 수집하고, 상위 layer는 몇 개의 중요한 전체적 특징을 포착하게 하기 위함.
+   * **Channel은 하위(앞, input에 가까운) layer는 작게, 상위(뒤, output에 가까운) layer로 갈수록 크게 설정**
+      * 하위 layer일수록 image의 크기가 커서 channel까지 많게 하면 메모리 부하 큼. 반면 상위 layer면 size가 작아져서 더 많은 channel 사용해도 괜찮게 됨.
+      * 상위 layer는 하위 layer보다 훨씬 복잡한 특징을 포착하게 됨(ex) 얼굴 인식이면 하위 layer는 눈, 코, 입같은 기본적인 feature를 분석하지만, 상위 layer는 얼굴 전체의 feature를 담아야 함) - 따라서 더 많은 channel을 사용하여 이를 도움.
    * **stride는 1 또는 2를 사용하고, stride가 아니면 절대로 image크기가 바뀌지 않도록 same padding을 사용한다.**  
       * 이래야만 image크기가 layer이 지나도 유지되므로 Residual Block, Inception등 CNN의 여러 심화 기법들을 사용할 수 있다.
-
+      * 최근 모델들에서 **image의 크기는 stride 2 padding으로만 축소 시키고 나머지 layer들은 모두 same padding을 써서 image크기를 일정하게 유지함.**
+   * **stride < kernel size - 절대 stride를 filter 크기 이상으로 설정하지 않는다.**
+      * stride가 더 크게 되면 건너뛰는 feature들이 생기게 됨
+  
 2) CNN의 크기 및 깊이 설정
    * **최소 연결 조건: 맨 앞의 feature과 맨 뒤의 feature가 연결될 수 있게 구성하라** - 조금 더 깊어도 상관 X
       * ex) 크기가 5 * 5의 image: 
@@ -92,20 +95,21 @@ sort: 4
 * 마지막 CNN layer의 Channel은 Feature개수인 38과 비슷한 16-32정도로 설정 - 아래 layer들은 이보다 2배씩 큰 channel값 할당.
 * 크기가 7인 x축 feature는 크기가 3인 filter 3개를 사용하면 맞춰줄 수 있다.
 * 여기에 **y축은 x축보다 5배가 크므로 stride가 2인 CNN을 2번 사용해줘서 맞춘다.**
+   * 그래도 38 / 4 = 9.5 로 7보다 조금 크다. 이를 메꾸기 위해 stride 2인 layer들의 kernel_size를 3으로 설정해줘서 조금 부족한 부분을 채워준다. 또는 stride 2 filter다음마다 stride 1 layer을 넣어줘도 된다.
 * 이러면 최소 연결 조건을 만족하므로 Flatten 후 Dense를 통해 결과를 얻는다.
   
 ```python
    ContextLayer = {
       #layer1: 1, 3 연결됨
-      CNN2D(channel_size=128, kernel_size=(3, 3))
-      CNN2D(channel_size=128, kernel_size=(1, 3), stride=(1, 2)) # 긴 y축 data를 2배로 축소
+      CNN2D(channel_size=32, kernel_size=(3, 3))
+      CNN2D(channel_size=32, kernel_size=(1, 3), stride=(1, 2)) # 긴 y축 data를 2배로 축소
 
       #layer2: 1, 5 연결됨
       CNN2D(channel_size=64, kernel_size=(3, 3))
       CNN2D(channel_size=64, kernel_size=(1, 3), stride=(1, 2)) # 긴 y축 data를 2배로 축소
 
       #layer3: 1, 7 연결됨
-      CNN2D(channel_size=32, kernel_size=(3, 3)) 
+      CNN2D(channel_size=128, kernel_size=(3, 3)) 
 
       #크기가 (7, 7)이라 너무 작아서 Pool은 생략
       Flatten()
