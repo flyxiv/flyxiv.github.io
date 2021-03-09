@@ -1,3 +1,7 @@
+---
+sort: 5
+---
+
 # Learning To Rank
 
 ## 1. 상대적 관계에 대한 학습

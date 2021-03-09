@@ -1,5 +1,5 @@
 ---
-sort: 5
+sort: 4
 ---
 
 # 리팩토링 / 디자인 패턴 예시 1 - FFXIV Speedkill Tracker
