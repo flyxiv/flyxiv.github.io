@@ -154,3 +154,22 @@ boss 리스트 정도만 전달하면 된다.
 즉 FightDataManager은 int 데이터를 mm:ss 형식으로 변환해주는 TrackerDataConverterTime 클래스와 보스의 남은 HP % 로 변환해주는 TrackerDataConverterHP클래스를 둘 다 갖고 있고,
 **Phase가 바뀔 때마다 그 Phase에서 tracking해야 되는 DataType에 따라 SetFormatter을 통해 알맞은 Formatter로 바꿔준다.**
 
+SpeedRunTrackerTable은 이 FightDataManager을 이용해 현재 들어오는 Data가 뭐건 간에 신경쓰지 않고 manager가 CurrentRunData의 Time, HP 데이터 중 필요한 Data를 꺼내서 알아서 formatting까지 해서 주므로, 이걸 그대로 print하면 된다.
+
+이러한 스테이트 패턴을 통해 기존에는 World Record와의 차이를 출력할 때 Time, HP 데이터에 대한 API가 SpeedRunTrackerTable, DifferenceCalculator에 각각 2개씩, 총 4개가 필요했는데 이제는 DifferenceCalculator의 기능은 아예 필요없고,
+SpeedRunTrackerTable에서 단 한 개의 API(UpdateCurrentRunWorldRecordRunDifference) 만으로 구현하게 되었다.
+
+
+추가로 리팩토링 하면서 한 가지 더 쓸만한 패턴을 적용할 수 있는 것을 깨달았다.
+CurrentRunDataMaker와 SpeedRunTrackerTable은 **페이즈가 바뀔 때마다 FFXIVSpeedkillTracker로 부터 현재 Phase에 대한 어떠한 정보를 새로 loading해야 된다.** CurrentRunDataMaker는 현재 페이즈의 BossNameList를 업데이트 받아야 되고,
+SpeedRunTrackerTable은 현재 Phase의 DataType을 업데이트 받아 FightDataManager가 알맞은 Formatter로 바뀌도록 해야 된다.
+
+이를 해결하기 위해 **페이즈가 바뀔 때마다 Subject의 상태를 Observer들에게 notify 하는 옵저버 패턴을 사용했다.**
+
+이 때 Observer/Subject Interface는 따로 정의하지 않았는데, 이는 현재 Tracker가 2개의 observer밖에 갖지 않기도 하고, 이후로도 더 많은 observer가 추가될 일은 많이 없을 거라고 판단하여 성급하게 추상화하는 대신
+일단은 각각 observer에 대해 notify()를 따로 구현하여 현재 구조에 가장 간단하게 맞도록 만들어주었다.
+
+향후에 Observer 개수가 늘게 되면 그 때 다시 리팩토링 해줘서 Observer 패턴을 완전히 쓸 예정이다.
+
+
+최근 읽은 디자인 패턴 중 옵저버 패턴, 디자인 패턴을 적용해본 유익한 사이드 프로젝트였다.
