@@ -193,7 +193,7 @@ ranking 비교 함수는 위에서 말한 크기 대소 뿐만 아니라 다음�
 ![facenet2](../images/facenet2.png)
  
 
-### 7) DirectRanker
+## 7) DirectRanker
 
 * RankNet의 일반화 버전
 
