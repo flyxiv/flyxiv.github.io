@@ -131,3 +131,11 @@ sort: 3
 * SENet - SE Block (2017)
   
 이러한 변형들도 매우 흥미롭고 CNN을 마스터하기에 필수 사항들이라, 다음 기회에 따로 정리하기로 한다.
+
+<script src="https://utteranc.es/client.js"
+        repo="flyxiv/flyxiv.github.io"
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
