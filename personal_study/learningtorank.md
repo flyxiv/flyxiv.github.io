@@ -204,3 +204,11 @@ ranking 비교 함수는 위에서 말한 크기 대소 뿐만 아니라 다음�
 * 그 다음 output layer는 둘 사이의 차로 이루어져 있고, 이들을 다시 종합해 antisymmetric activation function(ex) y=x, y=tanh(x)) 를 통과시켜 마지막 결과 얻음.
 * y = tanh(x/2) 활성화 함수와 cost로 binary crossentropy를 사용하면 RankNet이 됨 - 활성화 함수, cost function, Model에 대한 일반화
 * 이 또한 마찬가지로 전체 Dataset에 대한 선호 대소가 정의되어있어야함.
+
+<script src="https://utteranc.es/client.js"
+        repo="flyxiv/flyxiv.github.io"
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
