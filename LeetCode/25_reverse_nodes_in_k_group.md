@@ -1,3 +1,7 @@
+---
+sort: 25
+---
+
 # #25: Reverse Nodes In k-Group
 
 * 문제 URL: https://leetcode.com/problems/reverse-nodes-in-k-group/
