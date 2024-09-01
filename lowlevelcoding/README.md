@@ -2,7 +2,7 @@
 sort: 1
 ---
 
-# Memo
+# Low Level Learning For Through Understanding of Programming 
 
 ```
 {% raw %}{% include list.liquid all=true %}{% endraw %}
