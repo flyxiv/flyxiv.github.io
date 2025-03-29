@@ -1,0 +1,1 @@
+gsutil rsync -R public gs://www.junyeopna.blog
