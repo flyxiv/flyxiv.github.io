@@ -5,7 +5,6 @@ lastmod: 2025-03-28T09:18:01Z
 author: Jun Yeop Na 
 # avatar: /img/author.jpg
 # authorlink: https://author.site
-cover: /img/cover.jpg
 # images:
 #   - /img/cover.jpg
 categories:
@@ -16,10 +15,7 @@ tags:
 # nolastmod: true
 draft: true
 ---
-
 # Hello 
 Cut out summary from your post content here.
-
-<!--more-->
 
 The remaining content of your post.

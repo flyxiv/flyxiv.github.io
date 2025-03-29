@@ -38,7 +38,10 @@ RUN apt-get clean && \
 # Set the working directory
 WORKDIR /site
 
+# 
 COPY blog /site/
+
+EXPOSE 1313
 
 # Default command
 CMD ["bash"]

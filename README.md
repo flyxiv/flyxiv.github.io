@@ -19,7 +19,7 @@ $ docker run -it --name blog-dev-container -v "$(pwd)/blog:/site/blog" -v "$(pwd
 
 # 3. Run Container 
 ```sh
-$ docker run -it --name blog-dev-container -v "$(pwd)/blog:/site/blog" -v "C:\Users\<YourUsername>\AppData\Roaming\gcloud:/root/.config/gcloud:/root/.config/gcloud" blog_dev_env:v0.1 bash  
+$ docker run -it --name blog-dev-container -v "$(pwd)/blog:/site/blog" -v "./gcloud:/root/.config/gcloud" -p 1313:1313 blog_dev_env:v0.1 bash  
 ```
 
 # 4. Generate Hugo Static Files and upload to google cloud
@@ -41,5 +41,4 @@ $ hugo
 #  Cleaned          |  0
 
 $ gsutil cp -r public gs://jyn_blog_static_files
-```
 ```
