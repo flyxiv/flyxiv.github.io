@@ -9,10 +9,10 @@
     <lastBuildDate>Sun, 30 Mar 2025 08:47:20 +0000</lastBuildDate><atom:link href="http://example.org/tags/computer-vision/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>&lt;Computer Vision&gt; Implementing RTMDet-Ins 1. Backbone/Neck/Head Implementation</title>
-      <link>http://example.org/posts/rtmdet/implementing_rtmdet_ins/</link>
+      <link>http://example.org/posts/rtmdet/</link>
       <pubDate>Sun, 30 Mar 2025 08:47:20 +0000</pubDate>
       
-      <guid>http://example.org/posts/rtmdet/implementing_rtmdet_ins/</guid>
+      <guid>http://example.org/posts/rtmdet/</guid>
       <description>Implementing Instance Segmentation Model From Basic Pytorch: Segformer I&amp;rsquo;m currently working on a pixel sprite detection pipeline called nino:
 For the segmentation model, I chose to implement RTMDet-Ins, because
 I haven&amp;rsquo;t used this model before, so it will be a good chance to learn about it It is the current SOTA model for instance segmentation in real time. 0. Overview paper linkNeed custom CSP backbone blocks PAFPN Heads for various tasks seems simple.</description>
