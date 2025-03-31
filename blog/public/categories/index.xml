@@ -5,6 +5,16 @@
     <link>http://example.org/categories/</link>
     <description>Recent content in Categories on Junyeop Na Dev</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language><atom:link href="http://example.org/categories/index.xml" rel="self" type="application/rss+xml" />
+    <language>en-us</language>
+    <lastBuildDate>Sun, 30 Mar 2025 08:47:20 +0000</lastBuildDate><atom:link href="http://example.org/categories/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>computer vision</title>
+      <link>http://example.org/categories/computer-vision/</link>
+      <pubDate>Sun, 30 Mar 2025 08:47:20 +0000</pubDate>
+      
+      <guid>http://example.org/categories/computer-vision/</guid>
+      <description></description>
+    </item>
+    
   </channel>
 </rss>

@@ -5,6 +5,61 @@
     <link>http://example.org/tags/</link>
     <description>Recent content in Tags on Junyeop Na Dev</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language><atom:link href="http://example.org/tags/index.xml" rel="self" type="application/rss+xml" />
+    <language>en-us</language>
+    <lastBuildDate>Sun, 30 Mar 2025 08:47:20 +0000</lastBuildDate><atom:link href="http://example.org/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>computer vision</title>
+      <link>http://example.org/tags/computer-vision/</link>
+      <pubDate>Sun, 30 Mar 2025 08:47:20 +0000</pubDate>
+      
+      <guid>http://example.org/tags/computer-vision/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>deep learning</title>
+      <link>http://example.org/tags/deep-learning/</link>
+      <pubDate>Sun, 30 Mar 2025 08:47:20 +0000</pubDate>
+      
+      <guid>http://example.org/tags/deep-learning/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>image segmentation</title>
+      <link>http://example.org/tags/image-segmentation/</link>
+      <pubDate>Sun, 30 Mar 2025 08:47:20 +0000</pubDate>
+      
+      <guid>http://example.org/tags/image-segmentation/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>machine learning</title>
+      <link>http://example.org/tags/machine-learning/</link>
+      <pubDate>Sun, 30 Mar 2025 08:47:20 +0000</pubDate>
+      
+      <guid>http://example.org/tags/machine-learning/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>pytorch</title>
+      <link>http://example.org/tags/pytorch/</link>
+      <pubDate>Sun, 30 Mar 2025 08:47:20 +0000</pubDate>
+      
+      <guid>http://example.org/tags/pytorch/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>segformer</title>
+      <link>http://example.org/tags/segformer/</link>
+      <pubDate>Sun, 30 Mar 2025 08:47:20 +0000</pubDate>
+      
+      <guid>http://example.org/tags/segformer/</guid>
+      <description></description>
+    </item>
+    
   </channel>
 </rss>
