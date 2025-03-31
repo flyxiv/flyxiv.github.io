@@ -5,7 +5,7 @@ lastmod: 2025-03-30T08:47:20Z
 author: Jun Yeop(Johnny) Na
 # avatar: /img/author.jpg
 # authorlink: https://author.site
-cover: ./rtmdet.png
+cover: rtmdet.png
 categories:
   - computer vision
 tags:
@@ -123,6 +123,8 @@ class RTMDetCSPBlock(nn.Module):
         return x_merged
 ```
 
+</br></br>
+
 # 2. PAFPN
 
 ![pafpn](./rtmdet3.png)
@@ -197,6 +199,8 @@ class PAFPN(nn.Module):
         return p3_out, p4_out, p5_out
 
 ```
+
+</br></br>
 
 # 3. Detection Head
 

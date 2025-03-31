@@ -1739,7 +1739,7 @@
     max-width: calc(var(--spacing) * 48);
   }
   .max-w-\[65ch\] {
-    max-width: 65ch;
+    max-width: 100%;
   }
   .max-w-none {
     max-width: none;
@@ -2110,7 +2110,7 @@
   }
   .lg\:col-span-2 {
     @media (width >= 64rem) {
-      grid-column: span 2 / span 2;
+      grid-column: span 3 / span 3;
     }
   }
   .lg\:mt-8 {
