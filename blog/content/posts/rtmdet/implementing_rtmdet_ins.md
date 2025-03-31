@@ -5,7 +5,7 @@ lastmod: 2025-03-30T08:47:20Z
 author: Jun Yeop(Johnny) Na
 # avatar: /img/author.jpg
 # authorlink: https://author.site
-cover: /img/rtmdet.png
+cover: ./rtmdet.png
 categories:
   - computer vision
 tags:
@@ -23,7 +23,7 @@ draft: false
 
 I'm currently working on a pixel sprite detection pipeline called [nino](https://github.com/flyxiv/nino):
 
-![nino](../../img/nino.png)
+![nino](./nino.png)
 
 For the segmentation model, I chose to implement `RTMDet-Ins`, because
 
@@ -32,9 +32,9 @@ For the segmentation model, I chose to implement `RTMDet-Ins`, because
 
 ## 0. Overview
 
-- [paper link](https://paperswithcode.com/paper/rtmdet-an-empirical-study-of-designing-real)
+- [paper link](https://arxiv.org/pdf/2212.07784)
 
-![rtmdet](../../img/rtmdet.png)
+![rtmdet](./rtmdet.png)
 
 1. Need custom CSP backbone blocks
 2. PAFPN
@@ -46,7 +46,7 @@ seems simple.
 
 RTMDet uses **5x5 conv layer bottleneck blocks like the below image's figure 3.b:**
 
-![block](../../img/rtmdet2.png)
+![block](./rtmdet2.png)
 
 The CSP layer puts input through a 1x1 or 3x3 with 2 stride CNN layer depending on whether to downsampling or not.
 All can be easily implemented by torch components.
@@ -125,7 +125,7 @@ class RTMDetCSPBlock(nn.Module):
 
 # 2. PAFPN
 
-![pafpn](../../img/rtmdet3.png)
+![pafpn](./rtmdet3.png)
 
 Paper doesn't explain in detail. **Resize is probably interpolation/downsampling into CSP Block.**
 PAFPN upsampling isn't done using transpose CNN layers. Instead we use manual upsample function from Pytorch.
@@ -200,7 +200,7 @@ class PAFPN(nn.Module):
 
 # 3. Detection Head
 
-![head](../../img/rtmdet4.png)
+![head](./rtmdet4.png)
 
 Detection head doesn't have a clear explanation also, so we'll have to make some assumptions.
 
@@ -218,7 +218,7 @@ Detection head doesn't have a clear explanation also, so we'll have to make some
 
 To sum it up, the instance mask will have the following structure:
 
-![instance mask](../../img/rtmdet5.png)
+![instance mask](./rtmdet5.png)
 
 The mask calculation will be done as a postprocess after the detection head, since it is done only for valid prediction objects after the confidence threshold and nms algorithms.
 so **the role of the head will be to create the building blocks for generating the actual prediction:**
