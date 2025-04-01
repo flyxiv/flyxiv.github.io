@@ -1,4 +1,4 @@
-baseURL = 'http://example.org/'
+baseURL = 'https://www.junyeopna.blog/'
 languageCode = 'en-us'
 title = 'Junyeop Na Dev'
 theme = 'hugo-theme-dream'
