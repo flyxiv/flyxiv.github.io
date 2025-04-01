@@ -4,7 +4,7 @@ title = "Junyeop Na Dev"
 theme = "dream"
 
 [params]
-  author = "Junyeop Na"
-  headerTitle = "Junyeop Na Dev"
-  favicon = "/images/favicon.ico"  # Change this path to your desired favicon location
+  author = "Jun Yeop Na"
+  headerTitle = "Jun Yeop Na Dev Blog"
+  favicon = "/images/favicon.svg"  # Change this path to your desired favicon location
   siteStartYear = 2024 

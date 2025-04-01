@@ -1739,7 +1739,7 @@
     max-width: calc(var(--spacing) * 48);
   }
   .max-w-\[65ch\] {
-    max-width: 100%;
+    max-width: 65ch;
   }
   .max-w-none {
     max-width: none;
