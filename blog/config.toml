@@ -1,10 +1,11 @@
 baseurl = "http://example.org/"
 languageCode = "en-us"
-title = "Junyeop Na Dev"
+title = "Jun Yeop Na Dev"
 theme = "dream"
 
 [params]
   author = "Jun Yeop Na"
   headerTitle = "Jun Yeop Na Dev Blog"
   favicon = "/images/favicon.svg"  # Change this path to your desired favicon location
+  avatar = "/images/favicon.svg"
   siteStartYear = 2024 
