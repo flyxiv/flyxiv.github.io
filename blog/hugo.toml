@@ -2,3 +2,11 @@ baseURL = 'http://example.org/'
 languageCode = 'en-us'
 title = 'Junyeop Na Dev'
 theme = 'hugo-theme-dream'
+
+images = ["image/co-detr.png"]
+
+author = 'junyeopna'
+description = 'Jun Yeop Na ML BLog'
+headerTitle = 'Jun Yeop Na ML Blog'
+
+avatar = "image/favicon.svg"
