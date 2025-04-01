@@ -1,0 +1,10 @@
+baseurl = "http://example.org/"
+languageCode = "en-us"
+title = "Junyeop Na Dev"
+theme = "dream"
+
+[params]
+  author = "Junyeop Na"
+  headerTitle = "Junyeop Na Dev"
+  favicon = "/images/favicon.ico"  # Change this path to your desired favicon location
+  siteStartYear = 2024 

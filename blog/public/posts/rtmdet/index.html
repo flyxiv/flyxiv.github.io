@@ -403,7 +403,8 @@ All can be easily implemented by torch components.</p>
 </span></span><span style="display:flex;"><span>        x_merged <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>merge_conv(x_concat)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> x_merged
-</span></span></code></pre></div><h1 id="2-pafpn">2. PAFPN</h1>
+</span></span></code></pre></div><p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h1 id="2-pafpn">2. PAFPN</h1>
 <p><img src="./rtmdet3.png" alt="pafpn"></p>
 <p>Paper doesn&rsquo;t explain in detail. <strong>Resize is probably interpolation/downsampling into CSP Block.</strong>
 PAFPN upsampling isn&rsquo;t done using transpose CNN layers. Instead we use manual upsample function from Pytorch.</p>
@@ -471,7 +472,8 @@ PAFPN upsampling isn&rsquo;t done using transpose CNN layers. Instead we use man
 </span></span><span style="display:flex;"><span>        p5_out <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>c5_out(p5_plus)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> p3_out, p4_out, p5_out
-</span></span></code></pre></div><h1 id="3-detection-head">3. Detection Head</h1>
+</span></span></code></pre></div><p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h1 id="3-detection-head">3. Detection Head</h1>
 <p><img src="./rtmdet4.png" alt="head"></p>
 <p>Detection head doesn&rsquo;t have a clear explanation also, so we&rsquo;ll have to make some assumptions.</p>
 <ol>

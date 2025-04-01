@@ -1068,7 +1068,7 @@
   }
   .prose {
     color: var(--tw-prose-body);
-    max-width: 65ch;
+    max-width: 80%;
     :where(p):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
       margin-top: 1.25em;
       margin-bottom: 1.25em;
@@ -2110,7 +2110,7 @@
   }
   .lg\:col-span-2 {
     @media (width >= 64rem) {
-      grid-column: span 3 / span 3;
+      grid-column: span 4 / span 4;
     }
   }
   .lg\:mt-8 {
