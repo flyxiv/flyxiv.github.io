@@ -3,7 +3,7 @@ title: <Computer Vision> Implementing RTMDet-Ins 1. Backbone/Neck/Head Implement
 date: 2025-03-30T08:47:20Z
 lastmod: 2025-03-30T08:47:20Z
 author: Jun Yeop(Johnny) Na
-avatar: /images/author.jpg
+avatar: /images/favicon.svg
 # authorlink: https://author.site
 cover: rtmdet.png
 categories:
