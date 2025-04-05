@@ -3,9 +3,9 @@ title: <Computer Vision> Implementing RTMDet-Ins 2. Making COCO Dataset Reader
 date: 2025-03-30T08:47:20Z
 lastmod: 2025-03-30T08:47:20Z
 author: Jun Yeop(Johnny) Na
-avatar: /images/author.jpg
+avatar: /images/favicon.svg
 # authorlink: https://author.site
-cover: rtmdet.png
+cover: coco.png
 categories:
   - computer vision
 tags:
