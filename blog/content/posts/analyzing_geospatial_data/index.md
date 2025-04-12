@@ -1,5 +1,5 @@
 ---
-title: <Analytics> Analyzing Geospatial Data in Azure Synapse Analytics
+title: <Analytics> Starting Spark Session in Azure Synapse Analytics
 date: 2025-03-30T08:47:20Z
 lastmod: 2025-03-30T08:47:20Z
 author: Jun Yeop(Johnny) Na
