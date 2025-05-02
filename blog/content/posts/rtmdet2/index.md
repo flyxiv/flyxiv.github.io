@@ -24,7 +24,7 @@ The most widely used image dataset format is COCO.
 COCO format: https://cocodataset.org/#home
 
 1. label metadata is handled in train/valid/test.json
-2. image metadata in `images`, annotation data in `annotations`, labels in `
+2. image metadata in `images`, annotation data in `annotations`, labels in `categories`
 
 # 1. Basic COCO Format Example
 
@@ -189,7 +189,7 @@ TEST_ANNOTATION_FILE = "test.json"
 class COCOSegmentationDataset(Dataset):
     def __init__(self, root_dir, ann_file, transform=None, img_size=(512, 512)):
         """
-        COCO Segmentation 데이터셋을 로드하는 클래스
+        Load COCO Segmentation Dataset as Torch Dataset
 
         Args:
             root_dir (str): 이미지가 저장된 디렉토리 경로
@@ -240,12 +240,12 @@ class COCOSegmentationDataset(Dataset):
 
             bbox = ann['bbox']
 
-            x1 = bbox[0] * self.img_size[0] / orig_width
-            y1 = bbox[1] * self.img_size[1] / orig_height
-            x2 = (bbox[0] + bbox[2]) * self.img_size[0] / orig_width
-            y2 = (bbox[1] + bbox[3]) * self.img_size[1] / orig_height
+            x_center = (bbox[0] + bbox[2] / 2) * self.img_size[0] / orig_width
+            y_center = (bbox[1] + bbox[3] / 2) * self.img_size[1] / orig_height
+			w = bbox[2] * self.img_size[0] / orig_width
+            h = bbox[3] * self.img_size[1] / orig_height
 
-            boxes.append([x1, y1, x2, y2])
+            boxes.append([x_center, y_center, w, h])
 
         if self.transform:
             img = self.transform(img)
@@ -288,6 +288,15 @@ def collate_fn(batch):
 def get_coco_dataloaders(root_dir, batch_size=4, num_workers=1, shuffle=True, img_size=512):
     """Create train/valid/test dataloaders for COCO format segmentation dataset.
     """
+
+    try:
+        with open(os.path.join(root_dir, TRAIN_ANNOTATION_FILE), "r") as f:
+            train_data = json.load(f)
+
+            # must have background class, so add 1
+            num_classes = len(train_data['categories']) + 1
+    except FileNotFoundError:
+        raise FileNotFoundError(f"{TRAIN_ANNOTATION_FILE} not found in {root_dir}")
 
     # TODO: Add normalization
     transform = transforms.Compose([

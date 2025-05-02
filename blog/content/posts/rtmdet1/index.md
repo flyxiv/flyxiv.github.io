@@ -349,8 +349,10 @@ class RTMDetHead(nn.Module):
         Returns:
             cls_scores: has n_classes predictions for every P3/P4/P5 pixels
 
-            bbox_preds: has n_classes * 4 predictions for every P3/P4/P5 pixels, one bbox
-                        prediction is of format (center_dx_from_grid, center_dy_from_grid, w, h)
+			bbox_preds: has n_classes * 4 predictions for every P3/P4/P5 pixels, one bbox
+				prediction is of format (center_dx_from_grid, center_dy_from_grid, log(w), log(h))
+
+				Calculated in log scale to ensure positive values(will be exponentiated later) + smoothen bigger bbox values
 
             mask_kernels: (B, MASK_KERNEL_FEATURES, H, W)
             mask_feats: (B, MASK_FEATURES + 2, H, W)
