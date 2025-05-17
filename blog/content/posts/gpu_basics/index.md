@@ -1,15 +1,15 @@
 ---
-title: <Deep Learning Basics> ML Basics: GPU Types and Performance
+title: <Deep Learning Basics> ML Basics - GPU Types and Performance
 date: 2025-04-28T19:47:20Z
 lastmod: 2025-04-28T19:47:20Z
 author: Jun Yeop(Johnny) Na
 avatar: /images/favicon.svg
 # authorlink: https://author.site
-cover: nvidia.png 
+cover: nvidia.png
 categories:
-  - Machine Learning 
+  - Machine Learning
 tags:
-  - GPU 
+  - GPU
 # nolastmod: true
 draft: false
 ---
