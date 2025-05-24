@@ -79,20 +79,21 @@ $ cmake --build . --config Release
 			|    ├─ ggml-gpu.h
 			|    ├─ ggml-backend.h
 			|    ├─ ggml-alloc.h
+			|    ├─ ggml-cuda.h
 			|
             └─lib
                 └─Win64
                     ├─ whisper.lib
                     ├─ ggml.lib
                     ├─ ggml-cpu.lib
-                    ├─ ggml-gpu.lib
+                    ├─ ggml-cuda.lib
                     ├─ ggml-base.lib
 
 ```
 
 1. `whisper.h` will be in `whisper.cpp/include`
 2. Other include files are in `whisper.cpp/ggml/include`
-3.
+3. `whisper.lib` will be in `whisper.cpp/build/src/Release`, ggml libs will be in `whisper.cpp/build/ggml/src/Release`
 4. Leave `WhisperComponent.cpp/h` empty for now
 5. `WhisperIntegration.Build.cs` is as follows:
 
@@ -105,23 +106,44 @@ public class WhisperIntegration : ModuleRules
 	public WhisperIntegration(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-        PublicIncludePaths.Add(Path.GetFullPath(Path.Combine(ModuleDirectory, "Public")));
-        PrivateIncludePaths.Add(Path.GetFullPath(Path.Combine(ModuleDirectory, "Private")));
+		PublicIncludePaths.Add(Path.GetFullPath(Path.Combine(ModuleDirectory, "Public")));
+		PrivateIncludePaths.Add(Path.GetFullPath(Path.Combine(ModuleDirectory, "Private")));
 
 
-        PublicDependencyModuleNames.AddRange(new[] {
-            "Core", "CoreUObject", "Engine", "InputCore", "AudioCaptureCore", "SignalProcessing"
-        });
+		PublicDependencyModuleNames.AddRange(new[] {
+			"Core", "CoreUObject", "Engine", "InputCore", "AudioCaptureCore", "SignalProcessing"
+		});
 
-        string ThirdPartyPath = Path.Combine(ModuleDirectory, "..", "ThirdParty", "whisper.cpp");
-        PublicIncludePaths.Add(Path.Combine(ThirdPartyPath, "include"));
+		string ThirdPartyPath = Path.Combine(ModuleDirectory, "..", "ThirdParty", "whisper.cpp");
+		PublicIncludePaths.Add(Path.Combine(ThirdPartyPath, "include"));
 
-        string LibPath = Path.Combine(ThirdPartyPath, "lib");
-        string[] NeededLibs = { "whisper.lib", "ggml.lib", "ggml-base.lib", "ggml-gpu.lib", "ggml-cpu.lib" };
+		string LibPath = Path.Combine(ThirdPartyPath, "lib");
+		string[] NeededLibs = { "whisper.lib", "ggml.lib", "ggml-base.lib", "ggml-cuda.lib", "ggml-cpu.lib" };
 
-        foreach (string Lib in NeededLibs)
+		foreach (string Lib in NeededLibs)
+		{
+			PublicAdditionalLibraries.Add(Path.Combine(LibPath, Lib));
+		}
+
+        string CudaPath = System.Environment.GetEnvironmentVariable("CUDA_PATH");
+        if (!string.IsNullOrEmpty(CudaPath))
         {
-            PublicAdditionalLibraries.Add(Path.Combine(LibPath, Lib));
+            string CudaLibPath = Path.Combine(CudaPath, "lib", "x64");
+            if (Directory.Exists(CudaLibPath))
+            {
+                PublicAdditionalLibraries.Add(Path.Combine(CudaLibPath, "cudart.lib"));
+                PublicAdditionalLibraries.Add(Path.Combine(CudaLibPath, "cublas.lib"));
+                PublicAdditionalLibraries.Add(Path.Combine(CudaLibPath, "cuda.lib"));
+                System.Console.WriteLine($"Info: Added CUDA runtime libraries from: {CudaLibPath}");
+            }
+            else
+            {
+                System.Console.WriteLine($"Warning: CUDA lib path not found: {CudaLibPath}");
+            }
+        }
+        else
+        {
+            System.Console.WriteLine("Warning: CUDA_PATH environment variable not found. CUDA libraries will not be linked, which will cause linker errors if CUDA backend is used.");
         }
     }
 }
@@ -160,6 +182,37 @@ Now right click on .uproject file and rebuild
 
 # 4. Add Plugins Source
 
+- We have three components in the library:
+  - WhisperAudioResampler - whisper.cpp needs 16khz mono channel audio so we define a custom resampler(we can also use AudioDevice Resampler)
+  - WhisperBPLibrary - Blueprint Library that defines API for the plugin
+  - WhisperIntegrationModule - Core logic for integrating whisper.cpp with Unreal Engine
+
+## Header Files
+
+- `WhisperAudioResampler.h`
+
+```cpp
+/* ---------------------------------------------------
+	Resamples Audio to fit whisper.cpp
+	model's requirement of 16kHz and mono channel
+--------------------------------------------------- */
+
+#include "CoreMinimal.h"
+
+class WhisperAudioResampler {
+private:
+	WhisperAudioResampler();
+	~WhisperAudioResampler() {};
+	WhisperAudioResampler(const WhisperAudioResampler& resampler) = delete;
+	WhisperAudioResampler& operator=(const WhisperAudioResampler& resampler) = delete;
+	WhisperAudioResampler& operator=(WhisperAudioResampler&& resampler) = delete;
+
+public:
+	static bool Resample(const float* InAudio, int32 NumFrames, int32 NumChannels, int32 StartSampleRate, Audio::FAlignedFloatBuffer& OutAudio);
+	static const double WHISPER_TARGET_RESAMPLE_RATE;
+};
+```
+
 - `WhisperBPLibrary.h`
 
 ```cpp
@@ -168,13 +221,14 @@ Now right click on .uproject file and rebuild
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "AudioMixerDevice.h"
+#include "AudioDeviceManager.h"
 #include "Engine/World.h"
 #include "WhisperBPLibrary.generated.h"
 
 static TUniquePtr<Audio::FAudioRecordingData> RecordData;
 
 UCLASS()
-class WHISPERINTEGRATION_API UWhisperBPLibrary : public UBlueprintFunctionLibrary // 모듈 API 매크로 확인!
+class WHISPERINTEGRATION_API UWhisperBPLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 
@@ -185,11 +239,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Whisper Integration", meta = (DisplayName = "Transcribe Audio Buffer (Whisper)"))
 	static FString TranscribeAudioBuffer(const TArray<float> &PCMData);
 
-	static void Resample(const float* InAudio, int32 NumFrames, int32 NumChannels, int32 StartSampleRate, Audio::FAlignedFloatBuffer& OutAudio);
 };
 ```
 
-- `WhisperIntegration.h`
+- `WhisperIntegrationModule.h`
 
 ```cpp
 #pragma once
@@ -216,41 +269,133 @@ public:
 private:
     whisper_context* _context = nullptr;
 };
+```
+
+## Source Files
+
+- `WhisperAudioResampler.cpp`
+
+```cpp
+#include "WhisperAudioResampler.h"
+
+const double WhisperAudioResampler::WHISPER_TARGET_RESAMPLE_RATE = 16000.0F;
+
+bool WhisperAudioResampler::Resample(const float* InAudio, int32 NumSamples, int32 NumChannels, int32 StartSampleRate, Audio::FAlignedFloatBuffer& OutAudio)
+{
+	if (0 == NumSamples) {
+		UE_LOG(LogTemp, Error, TEXT("NumSamples == 0. Cannot resample."));
+		return false;
+	}
+
+	// Interpolate to Mono-Channel
+	Audio::FAlignedFloatBuffer MonoChannelAudio = Audio::FAlignedFloatBuffer();
+	MonoChannelAudio.SetNum((NumSamples / NumChannels));
+
+	for (int32 sampleCnt = 0; sampleCnt < NumSamples; sampleCnt += NumChannels)
+	{
+		float sum = 0.f;
+		for (int32 channelCnt = 0; channelCnt < NumChannels; ++channelCnt)
+			sum += InAudio[sampleCnt + channelCnt];
+		MonoChannelAudio.Add(sum / NumChannels);
+	}
+
+	// Interpolate to Target Sample Rate
+	const double Ratio = double(StartSampleRate) / WHISPER_TARGET_RESAMPLE_RATE;
+	const int32 NewLen = FMath::CeilToInt(MonoChannelAudio.Num() / Ratio);
+
+	OutAudio.SetNum(NewLen);
+
+	for (int32 i = 0; i < NewLen; ++i)
+	{
+		double SrcIdx = i * Ratio;
+		int32 Idx = FMath::FloorToInt(SrcIdx);
+		double Frac = SrcIdx - Idx;
+
+		float SampleValueAtStart = MonoChannelAudio[FMath::Clamp(Idx, 0, MonoChannelAudio.Num() - 1)];
+		float SampleValueAtEnd = MonoChannelAudio[FMath::Clamp(Idx + 1, 0, MonoChannelAudio.Num() - 1)];
+		OutAudio[i] = (SampleValueAtStart + (SampleValueAtEnd - SampleValueAtStart) * Frac);
+	}
+
+	return true;
+}
 ```
 
 - `WhisperBPLibrary.cpp`
 
 ```cpp
-#pragma once
+#include "WhisperBPLibrary.h"
+#include "WhisperIntegrationModule.h"
+#include "WhisperAudioResampler.h"
 
-#include "whisper.h"
-#include "CoreMinimal.h"
-#include "Modules/ModuleInterface.h"
-
-struct whisper_context;
-
-class FWhisperIntegrationModule : public IModuleInterface
+FString UWhisperBPLibrary::TranscribeAudioBuffer(const TArray<float> &PCMData)
 {
-public:
-    virtual void StartupModule() override;
-    virtual void ShutdownModule() override;
+	if (FModuleManager::Get().IsModuleLoaded(TEXT("WhisperIntegration")))
+	{
+		return FWhisperIntegrationModule::Get().TranscribeFromBuffer(PCMData.GetData(), PCMData.Num());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("UWhisperBPLibrary::TranscribeAudioBuffer - WhisperIntegration module is not loaded!"));
+		return FString(TEXT("[Error: WhisperIntegration Module Not Loaded]"));
+	}
+}
 
-    static inline FWhisperIntegrationModule& Get() {
-        return FModuleManager::GetModuleChecked<FWhisperIntegrationModule>("WhisperIntegration");
-    }
 
-    bool InitializeModel(const FString& ModelPath);
-    FString TranscribeFromBuffer(const float* PCMData, int32 SampleCount);
+FString UWhisperBPLibrary::TranslateMicToText(const UObject* WorldContextObject, USoundSubmix* SubmixToRecord) {
+	if (Audio::FMixerDevice* MixerDevice = FAudioDeviceManager::GetAudioMixerDeviceFromWorldContext(WorldContextObject))
+	{
+		float SampleRate;
+		float ChannelCount;
 
-private:
-    whisper_context* _context = nullptr;
-};
+		// Resample to 16kHz, mono channel
+		const Audio::FAlignedFloatBuffer& RecordedBuffer = MixerDevice->StopRecording(SubmixToRecord, ChannelCount, SampleRate);
+		Audio::FAlignedFloatBuffer ResampledBuffer = Audio::AlignedFloatBuffer();
+
+		const bool resample_result = WhisperAudioResampler::Resample(RecordedBuffer.GetData(), RecordedBuffer.Num(), (int32)ChannelCount, (int32)SampleRate, ResampledBuffer);
+
+		if (!resample_result || 0 == ResampledBuffer.Num())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("No audio data. Did you call Start Recording Output?"));
+			return FString("");
+		}
+
+
+		RecordData.Reset(new Audio::FAudioRecordingData());
+		RecordData->InputBuffer = Audio::TSampleBuffer<int16>(ResampledBuffer, 1, 16000);
+
+#if !UE_BUILD_SHIPPING
+		RecordData->Writer.BeginWriteToWavFile(RecordData->InputBuffer, "record", "", [SubmixToRecord]()
+			{
+				if (SubmixToRecord && SubmixToRecord->OnSubmixRecordedFileDone.IsBound())
+				{
+					SubmixToRecord->OnSubmixRecordedFileDone.Broadcast(nullptr);
+				}
+
+				RecordData.Reset();
+			}
+
+		);
+#endif
+
+		FString output = FWhisperIntegrationModule::Get().TranscribeFromBuffer(ResampledBuffer.GetData(), ResampledBuffer.Num());
+
+		return output;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Output recording is an audio mixer only feature."));
+	}
+
+	return FString("");
+
+}
 ```
 
-- `WhisperIntegration.cpp`
+- `WhisperIntegrationModule.cpp`
 
 ```cpp
-#include "WhisperIntegration.h"
+
+#include "WhisperIntegrationModule.h"
 #include "Misc/Paths.h"
 #include "HAL/PlatformMisc.h"
 
@@ -281,6 +426,7 @@ bool FWhisperIntegrationModule::InitializeModel(const FString& ModelPath) {
 	whisper_context_params PARAMS;
 	PARAMS.use_gpu = true;
 	PARAMS.gpu_device = 0;
+
     _context = whisper_init_from_file_with_params(TCHAR_TO_UTF8(*FullPath), PARAMS);
 
     if (!_context) {
