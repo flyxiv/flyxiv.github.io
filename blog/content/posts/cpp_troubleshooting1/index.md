@@ -1,5 +1,5 @@
 ---
-title: <C++ Server Programming> Troubleshooting 1. Fixing Thread Logic
+title: <C++ Server Programming> Troubleshooting - C++ Server and Unreal Engine
 date: 2025-04-28T19:47:20Z
 lastmod: 2025-03-30T19:47:20Z
 author: Jun Yeop(Johnny) Na
@@ -18,7 +18,9 @@ tags:
 draft: false
 ---
 
-# Situation
+# 1. nested threads in C++
+
+## Situation
 
 I was writing a unit test for my GlobalThreadManager Singleton Class:
 
@@ -108,3 +110,40 @@ TEST_F(ThreadManagerTest, ThreadIdGeneration) {
 	GlobalThreadManager->Join();
 }
 ```
+
+# 2. Unreal Engine Build Error
+
+## Error 1
+
+```
+The "GenerateMSBuildEditorConfig" task failed unexpectedly.
+
+System.UnauthorizedAccessException: Access to the path 'E:\UE_5.5\Engine\Source\Programs\AutomationTool\Mutable\RunMutableCommandlet\obj\Development\RunMutableCommandlet.Automation.GeneratedMSBuildEditorConfig.editorconfig' is denied.
+   at System.IO.__Error.WinIOError(Int32 errorCode, String maybeFullPath)
+   at System.IO.FileStream.Init(String path, FileMode mode, FileAccess access, Int32 rights, Boolean useRights, FileShare share, Int32 bufferSize, FileOptions options, SECURITY_ATTRIBUTES secAttrs, String msgPath, Boolean bFromProxy, Boolean useLongPath, Boolean checkHost)
+   at System.IO.FileStream..ctor(String path, FileMode mode, FileAccess access, FileShare share, Int32 bufferSize, FileOptions options, String msgPath, Boolean bFromProxy, Boolean useLongPath, Boolean checkHost)
+   at System.IO.StreamWriter.CreateFile(String path, Boolean append, Boolean checkHost)
+   at System.IO.StreamWriter..ctor(String path, Boolean append, Encoding encoding, Int32 bufferSize, Boolean checkHost)
+   at System.IO.File.InternalWriteAllText(String path, String contents, Encoding encoding, Boolean checkHost)
+   at Microsoft.CodeAnalysis.BuildTasks.GenerateMSBuildEditorConfig.WriteMSBuildEditorConfig()
+   at Microsoft.Build.BackEnd.TaskExecutionHost.Execute()
+   at Microsoft.Build.BackEnd.TaskBuilder.<ExecuteInstantiatedTask>d__26.MoveNext()
+```
+
+## Error 2
+
+![error](./error.png)
+
+## Solution for Error 1
+
+1. Had to add write permission for user to `E:\UE_5.5`
+
+![solution1](./solution1.png)
+
+2. Had to disable `read-only` option for the same directory as well
+
+![solution2](./solution2.png)
+
+## Solution for Error 2
+
+

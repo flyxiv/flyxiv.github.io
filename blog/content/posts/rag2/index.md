@@ -5,7 +5,7 @@ lastmod: 2025-05-16T12:47:20Z
 author: Jun Yeop(Johnny) Na
 avatar: /images/favicon.svg
 # authorlink: https://author.site
-cover: rag.png
+cover: cover.png
 categories:
   - RAG
 tags:
