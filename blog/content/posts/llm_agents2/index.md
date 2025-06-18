@@ -16,7 +16,7 @@ tags:
   - AI Agents
   - RAG
 # nolastmod: true
-draft: false
+draft: true 
 ---
 
 Now we have a basic StateGraph model that records the message log of the conversation with the user.
