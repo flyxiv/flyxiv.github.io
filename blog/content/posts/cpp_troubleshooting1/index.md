@@ -60,7 +60,7 @@ TEST_F(ThreadManagerTest, ThreadIdGeneration) {
 }
 ```
 
-After running the test, I figured out that **all the assert stations pass, but the test itself terminates with error code 3.**
+After running the test, I figured out that **all the assert statements pass, but the test itself terminates with error code 3.**
 
 # Reason For Bug
 
@@ -145,5 +145,3 @@ System.UnauthorizedAccessException: Access to the path 'E:\UE_5.5\Engine\Source\
 ![solution2](./solution2.png)
 
 ## Solution for Error 2
-
-

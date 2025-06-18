@@ -1,5 +1,5 @@
 ---
-title: <C++> Installing whisper.cpp
+title: <C++> Implementing Unreal Plugin for whisper Model.
 date: 2025-04-14T18:33:20Z
 lastmod: 2025-04-14T18:33:20Z
 author: Jun Yeop(Johnny) Na
