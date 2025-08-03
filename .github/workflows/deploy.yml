@@ -1,0 +1,47 @@
+name: Deploy Hugo to GCP Compute Engine
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          submodules: true # Fetch Hugo themes (if using git submodules)
+          fetch-depth: 0 # Fetch all history for .GitInfo and .Lastmod
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: "latest"
+          extended: true # Use extended version if needed
+
+      - name: Build Hugo site
+        run: hugo
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+
+      - name: Deploy to Compute Engine
+        env:
+          INSTANCE_NAME: ${{ secrets.GCE_INSTANCE }}
+          ZONE: ${{ secrets.GCE_ZONE }}
+          PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          USER_NAME: ${{ secrets.GCE_USER_NAME }}
+        run: |
+          # Copy built site to the instance
+          gcloud compute ssh ${USER_NAME}@${INSTANCE_NAME} \
+            --zone=${ZONE} \
+            --project=${PROJECT_ID} \
+            --command="cd ~/flyxiv.github.io/blog && git pull origin master && hugo && sudo systemctl restart nginx"
