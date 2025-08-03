@@ -1,6 +1,6 @@
 ---
 title: Understanding Foundation Models
-date: 2025-07-27:47:20Z
+date: 2025-07-27T08:47:20Z
 lastmod: 2025-07-27T08:47:20Z
 author: Jun Yeop(Johnny) Na
 avatar: /images/favicon.svg

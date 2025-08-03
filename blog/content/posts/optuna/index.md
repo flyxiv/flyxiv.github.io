@@ -1,6 +1,6 @@
 ---
 title: <Deep Learning Intermediate> Optuna for Effective Hyperparameter Tuning
-date: 2025-05-04:47:20Z
+date: 2025-05-04T19:47:20Z
 lastmod: 2025-05-04T19:47:20Z
 author: Jun Yeop(Johnny) Na
 avatar: /images/favicon.svg
