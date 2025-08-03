@@ -14,7 +14,7 @@ tags:
   - Pytorch
 
 # nolastmod: true
-draft: false
+draft: true
 ---
 
 Training in a single GPU environment is enough for small models, but when we start to handle big LLM models, we need to utilize tens, hundreds, and even thousands of GPUs to train models.
