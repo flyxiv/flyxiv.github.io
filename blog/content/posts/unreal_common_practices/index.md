@@ -5,7 +5,7 @@ lastmod: 2025-06-29T18:33:20Z
 author: Jun Yeop(Johnny) Na
 avatar: /images/favicon.svg
 # authorlink: https://author.site
-cover: computer_vision.png
+cover: cover.png
 categories:
   - unreal
   - c++

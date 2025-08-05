@@ -5,7 +5,7 @@ lastmod: 2025-06-27T10:04:20Z
 author: Jun Yeop(Johnny) Na
 avatar: /images/favicon.svg
 # authorlink: https://author.site
-cover: fine-tuning.png
+cover: cover.png
 categories:
   - LLM
   - Supervised fine tuning
